@@ -1,6 +1,9 @@
 package clockSync.server;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -12,6 +15,11 @@ public class SyncServer {
 	
 	private ServerSocket server;
 	public static final int port = 4444;
+	
+	public static void main(String[] args){
+		SyncServer srv = new SyncServer();
+		srv.run();
+	}
 	
 	public SyncServer(){
 		
@@ -25,10 +33,25 @@ public class SyncServer {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+		System.out.println("Server running.");
 		try {
 			client = server.accept();
-			System.out.println(client.getInetAddress());
+			System.out.println("Ricevuta una richiesta da " + client.getInetAddress());
+			
+			PrintWriter out = new PrintWriter(client.getOutputStream(), true);
+		    BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+		    
+		    String received = in.readLine();
+		    System.out.println("Ricevuto: " + received);
+
+		    if (received.equals("REQUEST CURRENT TIME")){
+		    	out.println(new java.util.Date());
+		    }else{
+		    	out.println("ERROR");
+		    }
+		    
+		    out.close();
+		    in.close();
 			client.close();
 		} catch (IOException e) {
 			e.printStackTrace();
