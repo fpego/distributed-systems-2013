@@ -1,13 +1,7 @@
 package clockSync.server;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
-import java.net.Socket;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 /**
  * Con questa classe, si vuole fornire un servizio di network clock syncronization.
@@ -16,6 +10,7 @@ import java.util.Calendar;
 public class SyncServer {
 	
 	private ServerSocket server;
+	private boolean listening;
 	public static final int port = 4444;
 	
 	public static void main(String[] args){
@@ -24,55 +19,31 @@ public class SyncServer {
 	}
 	
 	public SyncServer(){
-		
+		listening = true;
 	}
 	
 	public void run(){
-		Socket client = null;
-		
 		try {
 			server = new ServerSocket(port);
+			System.out.println("Server up and listening on port " + port);
+			while (listening){
+			    new SyncServerThread(server.accept()).start();
+			}
+			server.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+			return;
 		}
-		System.out.println("Server running.");
-		try {
-			client = server.accept();
-			long responseTime = System.currentTimeMillis();
-			System.out.println("Ricevuta una richiesta da " + client.getInetAddress());
-			
-			PrintWriter out = new PrintWriter(client.getOutputStream(), true);
-		    BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-		    
-		    String received = in.readLine();
-		    System.out.println("Ricevuto: " + received);
+	}
 
-		    if (received.equals("REQUEST CURRENT TIME")){
-		    	long currentTime = System.currentTimeMillis();
-		    	long elapsed = currentTime - responseTime;
-		    	out.println(currentTime + ":" + elapsed);
-		    }else{
-		    	out.println("ERROR");
-		    }
-		    
-		    out.close();
-		    in.close();
-			client.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public boolean isListening() {
+		return listening;
+	}
+
+	public void setListening(boolean listening) {
+		this.listening = listening;
 	}
 	
-	public void close(){
-		if (this.server != null){
-			try{
-				server.close();
-			}catch (Exception e){
-				e.printStackTrace();
-			}
-		}
-			
-	}
 }
 
 /*
