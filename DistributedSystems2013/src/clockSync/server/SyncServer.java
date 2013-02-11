@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * Con questa classe, si vuole fornire un servizio di network clock syncronization.
@@ -36,6 +38,7 @@ public class SyncServer {
 		System.out.println("Server running.");
 		try {
 			client = server.accept();
+			long responseTime = System.currentTimeMillis();
 			System.out.println("Ricevuta una richiesta da " + client.getInetAddress());
 			
 			PrintWriter out = new PrintWriter(client.getOutputStream(), true);
@@ -45,7 +48,9 @@ public class SyncServer {
 		    System.out.println("Ricevuto: " + received);
 
 		    if (received.equals("REQUEST CURRENT TIME")){
-		    	out.println(new java.util.Date());
+		    	long currentTime = System.currentTimeMillis();
+		    	long elapsed = currentTime - responseTime;
+		    	out.println(currentTime + ":" + elapsed);
 		    }else{
 		    	out.println("ERROR");
 		    }

@@ -6,6 +6,9 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public class SyncClient {
 
@@ -20,7 +23,17 @@ public class SyncClient {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		String[] times = time.split(":");
+		for (int i = 0; i < times.length; i++){
+			System.out.println(times[i]);
+		}
+		Date d = new Date(Long.parseLong(times[0]));
 		System.out.println("Il server ha risposto con l'ora corrente: " + time);
+		
+		System.out.println("Data: " + d.toString());
+		String localTime = "";
+	    localTime = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(Calendar.getInstance().getTime());
+		System.out.println("Local time: " + localTime);
 	}
 	
 	public SyncClient(){
