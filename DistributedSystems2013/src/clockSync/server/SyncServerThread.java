@@ -14,19 +14,19 @@ public class SyncServerThread extends Thread{
 	private long responseTime;
 	private long currentTime;
 	private long elapsedTime;
-	
 	private PrintWriter out;
 	private BufferedReader in;
 	
-    public SyncServerThread(Socket socket) {
+    public SyncServerThread(Socket socket, long responseTime) {
     	super("SyncServerThread");
-    	responseTime = System.currentTimeMillis();
     	protocol = new ClockSyncProtocol();
+    	this.responseTime = responseTime;
     	this.client = socket;
     }
 
     public void run() {
 		try {
+			
 			System.out.println("Ricevuta una richiesta da " + client.getInetAddress() + ":" + client.getPort());
 			
 			out = new PrintWriter(client.getOutputStream(), true);
@@ -37,7 +37,7 @@ public class SyncServerThread extends Thread{
 
 		    if (received.equals(ClockSyncProtocol.REQ_SIMPLE)){
 		    	currentTime = System.currentTimeMillis();
-		    	elapsedTime = currentTime - responseTime;
+		    	elapsedTime = System.nanoTime() - responseTime;
 		    	out.println(protocol.simpleResponse(currentTime, elapsedTime));
 		    }else if (received.equals(ClockSyncProtocol.REQ_FULL)){
 		    	out.println(protocol.fullResponse());

@@ -2,6 +2,7 @@ package clockSync.server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 
 import clockSync.common.ClockSyncProtocol;
 
@@ -26,11 +27,13 @@ public class SyncServer {
 	}
 	
 	public void run(){
+		Socket client;
 		try {
 			server = new ServerSocket(ClockSyncProtocol.port);
 			System.out.println("Server up and listening on port " + ClockSyncProtocol.port);
 			while (listening){
-			    new SyncServerThread(server.accept()).start();
+				client = server.accept();
+			    new SyncServerThread(client, System.nanoTime()).start();
 			}
 			server.close();
 		} catch (IOException e) {

@@ -47,30 +47,31 @@ public class SyncClient {
 		}
 		
 		try{
-			startTime = System.currentTimeMillis();
-			
+			startTime = System.nanoTime();
 			out.println(ClockSyncProtocol.REQ_SIMPLE);
 	        fromServer = in.readLine();
 	        
-	        endTime = System.currentTimeMillis();
+	        endTime = System.nanoTime();
 			
 			String[] parts = fromServer.split(ClockSyncProtocol.SEPARATOR);
 			if (parts.length != 2){
 				System.err.println("Parts non ha dimensione 2 ma " + parts.length);
 				return 0;
 			}
+			
 			serverTime = Long.parseLong(parts[0]);
 			serverInterrutpTime = Long.parseLong(parts[1]);
 			
-			/*
 			System.out.println("Start Time: "+ startTime);
 			System.out.println("End Time: "+ endTime);
 			System.out.println("Server Time: "+ serverTime);
 			System.out.println("Server Interrupt Time: "+ serverInterrutpTime);
 			System.out.println("endTime - startTime - serverInterrutpTime: "+ (endTime - startTime - serverInterrutpTime));
-			*/
 			
-			currentTime = serverTime + (endTime - startTime - serverInterrutpTime) / 2;
+			currentTime = serverTime;
+			
+			if ((endTime - startTime - serverInterrutpTime) > 0)
+				currentTime += (endTime - startTime - serverInterrutpTime) / 2000;
 		}catch (Exception e){
 			e.printStackTrace();
 		}
