@@ -28,20 +28,28 @@ public class ClockSyncProtocol {
 	 * 
 	 * @param fromServer: risposta del server
 	 * @param type: tipo di richiesta effettuata (simple o full)
-	 * @return string contenente la data attuale
+	 * @param clientInterruptTime: tempo intercorso sul client tra la chiamata iniziale e la risposta dal server, in nanosecondi
+	 * @return long contenente la data attuale in millisecondi da linux time
 	 */
-	public String parseResponse(String fromServer, String type) {
+	public static long parseResponse(String fromServer, String type, long clientInterruptTime) {
 		if (type.equals(REQ_SIMPLE)){
 			// la richiesta è formata dal tempo sul server, il separatore e l'intervallo di tempo impiegato dal server per
 			// rispondere alla richiesta
 			String[] parts = fromServer.split(SEPARATOR);
 			if (parts.length != 2){
-				return null;
+				return 0;
 			}
+			long serverTime = Long.parseLong(parts[0]);
+			long serverInterrutpTime = Long.parseLong(parts[1]);
+			long currentTime = serverTime;
 			
+			if ((clientInterruptTime - serverInterrutpTime) > 0)
+				currentTime += (clientInterruptTime - serverInterrutpTime) / 2000;
+			
+			return currentTime;
 		}else if (type.equals(REQ_FULL)){
 			
 		}
-		return null;
+		return 0;
 	}
 }

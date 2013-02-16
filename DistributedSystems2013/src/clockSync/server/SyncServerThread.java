@@ -26,7 +26,6 @@ public class SyncServerThread extends Thread{
 
     public void run() {
 		try {
-			
 			System.out.println("Ricevuta una richiesta da " + client.getInetAddress() + ":" + client.getPort());
 			
 			out = new PrintWriter(client.getOutputStream(), true);
