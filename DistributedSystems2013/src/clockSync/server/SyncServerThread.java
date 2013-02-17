@@ -34,12 +34,10 @@ public class SyncServerThread extends Thread{
 		    String received = in.readLine();
 		    System.out.println("Ricevuto: " + received);
 
-		    if (received.equals(ClockSyncProtocol.REQ_SIMPLE)){
+		    if (received.equals(ClockSyncProtocol.REQ_SIMPLE) || received.equals(ClockSyncProtocol.REQ_FULL)){
 		    	currentTime = System.currentTimeMillis();
 		    	elapsedTime = System.nanoTime() - responseTime;
 		    	out.println(protocol.simpleResponse(currentTime, elapsedTime));
-		    }else if (received.equals(ClockSyncProtocol.REQ_FULL)){
-		    	out.println(protocol.fullResponse());
 		    }else{
 		    	out.println("ERROR");
 		    }

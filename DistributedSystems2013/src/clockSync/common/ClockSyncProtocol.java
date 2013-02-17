@@ -1,5 +1,7 @@
 package clockSync.common;
 
+import java.util.ArrayList;
+
 /**
  * Classe comune, implementa il protocollo di comunicazione tra client e server
  */
@@ -11,6 +13,8 @@ public class ClockSyncProtocol {
 	public final static String REQ_FULL = "REQ FULL SYNC";
 	public final static String SEPARATOR = ":";
 	
+	private ArrayList<Long> valori_full_response = null; 
+	private long last_server_time;
 	
 	public ClockSyncProtocol(){	}
 	
@@ -18,10 +22,6 @@ public class ClockSyncProtocol {
 		return Long.toString(currentTime) + SEPARATOR + Long.toString(elapsedTime);
 	}
 	
-	public String fullResponse(){
-		return "TO IMPLEMENT";
-	}
-
 	/**
 	 * A seconda del tipo di risposta richiesta al server, fornisce il tempo attuale restituito
 	 * dal server
@@ -31,7 +31,7 @@ public class ClockSyncProtocol {
 	 * @param clientInterruptTime: tempo intercorso sul client tra la chiamata iniziale e la risposta dal server, in nanosecondi
 	 * @return long contenente la data attuale in millisecondi da linux time
 	 */
-	public static long parseResponse(String fromServer, String type, long clientInterruptTime) {
+	public long parseResponse(String fromServer, String type, long clientInterruptTime) {
 		if (type.equals(REQ_SIMPLE)){
 			// la richiesta è formata dal tempo sul server, il separatore e l'intervallo di tempo impiegato dal server per
 			// rispondere alla richiesta
@@ -48,8 +48,38 @@ public class ClockSyncProtocol {
 			
 			return currentTime;
 		}else if (type.equals(REQ_FULL)){
+			if (valori_full_response == null){
+				valori_full_response = new ArrayList<Long>();
+			}
 			
+			String[] parts = fromServer.split(SEPARATOR);
+			if (parts.length != 2){
+				return 0;
+			}
+			long serverTime = Long.parseLong(parts[0]);
+			long serverInterrutpTime = Long.parseLong(parts[1]);
+			
+			this.last_server_time = serverTime;
+			long diff = clientInterruptTime - serverInterrutpTime > 0 ? clientInterruptTime - serverInterrutpTime : 0L;
+			valori_full_response.add(diff);
 		}
 		return 0;
 	}
+	
+	/**
+	 * Eseguo la media tra i valori di valori_full_response, quindi lo aggiungo a last_server_time e lo ritorno
+	 * @return
+	 */
+	public long getFullResponse(){
+		if (valori_full_response != null && !valori_full_response.isEmpty()){
+			long media = 0;
+			for (int i = 0; i < valori_full_response.size(); i++){
+				media += valori_full_response.get(i);
+			}
+			media = media / (valori_full_response.size() * 2000);
+			return this.last_server_time + media;
+		}
+		return 0L;
+	}
+
 }
