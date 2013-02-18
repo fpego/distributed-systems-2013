@@ -6,7 +6,9 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import clockSync.common.ClockSyncProtocol;
 
@@ -18,24 +20,36 @@ public class SyncClient {
 	public static final int DEFAULT_REQUEST_NUMBER = 10;
 	// server di default
 	public static final String DEFAULT_SERVER = "localhost";
+	// tempo (in millisecondi) tra le richieste nel caso FULL
+	private final long SLEEP_TIME = 100;
 	
 	private String host;
 	private String request_type;
 	private int request_number_full;
+	private ClockSyncProtocol protocol;
+	private long currentTime;
+	
+	private Calendar calendar;
+	private SimpleDateFormat date_format;
 	
 	public static void main(String[] args){
 		SyncClient client = new SyncClient();
-		long time = client.getCurrentTime(1);
-		System.out.println("Il server ha risposto con l'ora corrente: " + time);
+
+		System.out.println("Data: " + client.getCurrentTimeAsString(0));
 		
-		Date d = new Date(time);
-		System.out.println("Data: " + d.toString());
+		System.out.println("Data: " + client.getCurrentTimeAsString(1));
+		
+		System.out.println("Data: " + client.getCurrentTimeAsString(100));
 	}
 	
 	public SyncClient(){
 		host = SyncClient.DEFAULT_SERVER;
 		request_type = ClockSyncProtocol.REQ_SIMPLE;
 		request_number_full = SyncClient.DEFAULT_REQUEST_NUMBER;
+		protocol = new ClockSyncProtocol();
+		calendar = new GregorianCalendar();
+		date_format = new SimpleDateFormat("dd/MM/yyyy hh:mm ss SSS");
+		currentTime = 0L;
 	}
 	
 	/**
@@ -45,27 +59,25 @@ public class SyncClient {
 	 * @return tempo letto dal server
 	 */
 	public long getCurrentTime(int request_type){
-		if (request_type == 0)
-			return this.getCurrentTime(ClockSyncProtocol.REQ_SIMPLE);
-		else if (request_type == 1)
-			return this.getCurrentTime(ClockSyncProtocol.REQ_FULL);
-		else if (request_type >= 2 && request_type <= SyncClient.MAX_REQUEST_NUMBER){
-			int current_request_number = this.request_number_full;
+		if (request_type == 0){
+			this.request_type = ClockSyncProtocol.REQ_SIMPLE;
+		}else if (request_type == 1){
+			this.request_type = ClockSyncProtocol.REQ_FULL;
+		}else if (request_type >= 2 && request_type <= SyncClient.MAX_REQUEST_NUMBER){
 			this.setRequestNumber(request_type);
-			long time = this.getCurrentTime(ClockSyncProtocol.REQ_FULL);
-			this.setRequestNumber(current_request_number);
-			return time;
+			this.request_type = ClockSyncProtocol.REQ_FULL;
 		}
-			
-		return 0;
+		
+		getCurrentTime();
+		
+		return this.currentTime;
 	}
 	
-	/**
-	 * Ritorna il tempo corrente letto dal server utilizzando il tipo di richiesta settato nella classe.
-	 * @return
-	 */
-	public long getCurrentTime(){
-		return this.getCurrentTime(this.request_type);
+	public String getCurrentTimeAsString(int request_type){
+		getCurrentTime(request_type);
+		
+		calendar.setTimeInMillis(currentTime);
+	    return date_format.format(calendar.getTime());
 	}
 	
 	/**
@@ -74,73 +86,60 @@ public class SyncClient {
 	 * @param request_type: viene usato questo request type per la chiamata al server
 	 * settato nella classe.
 	 */
-	private long getCurrentTime(String request_type){
+	private void getCurrentTime(){
+		if (request_type.equals(ClockSyncProtocol.REQ_SIMPLE)){
+			executeRequest();
+		} else if (request_type.equals(ClockSyncProtocol.REQ_FULL)){
+				// faccio N volte la richiesta semplice, poi ci pensa la classe del protocollo a fare la media tra i valori
+				checkRequestNumber();
+				int current_iteration;
+				for (current_iteration = 0; current_iteration < this.request_number_full; current_iteration++){
+					executeRequest();
+					if (this.host == null){
+						currentTime = 0L;
+						return;
+					}
+					try {
+						Thread.sleep(SLEEP_TIME);
+					} catch (InterruptedException e) {	}
+			    }
+				currentTime = protocol.getFullResponse();
+		}
+	}
+	
+	/**
+	 * Esegue una singola chiamata al server per ottenere l'ora corrente e la salva nella variabile di classe currentTime
+	 */
+	private void executeRequest(){
 		Socket socket = null;
         String fromServer = null;
 		PrintWriter out = null;
         BufferedReader in = null;
-        ClockSyncProtocol protocol = new ClockSyncProtocol();
         long startTime = 0, endTime = 0;
-        //long serverTime = 0, serverInterrutpTime = 0;
-        long currentTime = 0;
+        
+        this.currentTime = 0L;
         
 		try {
 			socket = new Socket(host, ClockSyncProtocol.port);
 			out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		} catch (UnknownHostException e) {
-			System.out.println("Server unkwnoun: " + host);
-			return 0;
+			System.out.println("Server unknown: " + host);
+			host = null;
+			return;
 		} catch (IOException e) {
+			host = null;
 			e.printStackTrace();
-			return 0;
+			return;
 		}
 		
 		try{
-			if (request_type.equals(ClockSyncProtocol.REQ_SIMPLE)){
-				startTime = System.nanoTime();
-				out.println(ClockSyncProtocol.REQ_SIMPLE);
-		        fromServer = in.readLine();
-		        endTime = System.nanoTime();
+			startTime = System.nanoTime();
+			out.println(this.request_type);
+	        fromServer = in.readLine();
+	        endTime = System.nanoTime();
 				
-		        currentTime = protocol.parseResponse(fromServer, ClockSyncProtocol.REQ_SIMPLE, endTime - startTime);
-			} else if (request_type.equals(ClockSyncProtocol.REQ_FULL)){
-				// faccio N volte la richiesta semplice, poi ci pensa la classe del protocollo a fare la media tra i valori
-				this.checkRequestNumber();
-				int current_iteration;
-				for (current_iteration = 0; current_iteration < this.request_number_full; current_iteration++){
-					if (current_iteration != 0){
-						try {
-							socket = new Socket(host, ClockSyncProtocol.port);
-							out = new PrintWriter(socket.getOutputStream(), true);
-				            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-						} catch (UnknownHostException e) {
-							System.out.println("Server unkwnoun: " + host);
-							return 0;
-						} catch (IOException e) {
-							e.printStackTrace();
-							return 0;
-						}
-					}
-					
-					startTime = System.nanoTime();
-					out.println(ClockSyncProtocol.REQ_FULL);
-			        fromServer = in.readLine();
-			        endTime = System.nanoTime();
-			        System.out.println(current_iteration + ") Risposta: " + fromServer);
-			        protocol.parseResponse(fromServer, ClockSyncProtocol.REQ_FULL, endTime - startTime);
-			        Thread.sleep(100);
-			        
-			        if (current_iteration != request_number_full - 1){
-			        try {
-			        	out.close();
-			        	in.close();
-						socket.close();
-					} catch (IOException e) { }
-			        }
-			    }
-				currentTime = protocol.getFullResponse();
-			}
+	        this.currentTime = this.protocol.parseResponse(fromServer, this.request_type, endTime - startTime);
 		}catch (Exception e){
 			e.printStackTrace();
 		}
@@ -150,8 +149,6 @@ public class SyncClient {
         	in.close();
 			socket.close();
 		} catch (IOException e) { }
-		
-		return currentTime;
 	}
 	
 	/**

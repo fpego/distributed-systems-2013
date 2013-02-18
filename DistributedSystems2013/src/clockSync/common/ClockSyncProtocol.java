@@ -63,7 +63,7 @@ public class ClockSyncProtocol {
 			long diff = clientInterruptTime - serverInterrutpTime > 0 ? clientInterruptTime - serverInterrutpTime : 0L;
 			valori_full_response.add(diff);
 		}
-		return 0;
+		return 0L;
 	}
 	
 	/**
@@ -77,6 +77,8 @@ public class ClockSyncProtocol {
 				media += valori_full_response.get(i);
 			}
 			media = media / (valori_full_response.size() * 2000);
+			// ora posso cancellare l'array
+			valori_full_response.clear();
 			return this.last_server_time + media;
 		}
 		return 0L;
