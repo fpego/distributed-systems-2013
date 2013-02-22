@@ -8,6 +8,9 @@ import java.net.Socket;
 
 import clockSync.common.ClockSyncProtocol;
 
+/**
+ * Istanza del server che risponde effettivamente alla chiamata di un client 
+ */
 public class SyncServerThread extends Thread{
 	private Socket client = null;
 	private ClockSyncProtocol protocol;
@@ -16,6 +19,7 @@ public class SyncServerThread extends Thread{
 	private long elapsedTime;
 	private PrintWriter out;
 	private BufferedReader in;
+	private String received;
 	
     public SyncServerThread(Socket socket, long responseTime) {
     	super("SyncServerThread");
@@ -26,27 +30,35 @@ public class SyncServerThread extends Thread{
 
     public void run() {
 		try {
-			System.out.println("Ricevuta una richiesta da " + client.getInetAddress() + ":" + client.getPort());
+			System.out.println("Request received from client " + client.getInetAddress() + ":" + client.getPort());
 			
 			out = new PrintWriter(client.getOutputStream(), true);
 		    in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 		    
-		    String received = in.readLine();
-		    System.out.println("Ricevuto: " + received);
+		    received = in.readLine();
 
 		    if (received.equals(ClockSyncProtocol.REQ_SIMPLE) || received.equals(ClockSyncProtocol.REQ_FULL)){
 		    	currentTime = System.currentTimeMillis();
 		    	elapsedTime = System.nanoTime() - responseTime;
 		    	out.println(protocol.simpleResponse(currentTime, elapsedTime));
 		    }else{
-		    	out.println("ERROR");
+		    	out.println("ERROR: REQUEST NOT VALID");
 		    }
 		    
-		    out.close();
-		    in.close();
-			client.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.err.println("Comunication error: " + e.getLocalizedMessage());
 		}
+		
+		try{
+			out.close();
+		}catch (Exception e){}
+		
+		try{
+			in.close();
+		}catch (Exception e){}
+		
+		try{
+			client.close();
+		}catch (Exception e){}
     }
 }

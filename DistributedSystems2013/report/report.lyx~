@@ -72,19 +72,23 @@ February 19, 2013
 \end_layout
 
 \begin_layout Abstract
-Implement a clock synchronization primitive.
+Implement in Java a clock synchronization primitive.
  Choose the strategy that you think best to synchronize the clock of a requestin
 g machine against that of a reference (server) machine.
 \end_layout
 
-\begin_layout Abstract
-In Java implement a library that offers the required functionality and a
- test application that uses this library to synchronize the clocks of a
- group of machines against a reference one.
-\end_layout
-
 \begin_layout Part
 Problem description
+\end_layout
+
+\begin_layout Section
+Problem analysis
+\end_layout
+
+\begin_layout Standard
+The goal of this project is to create a Java server providing a clock synchroniz
+ation primitive.
+ The server must implement at least one standard protocol for clock passing.
 \end_layout
 
 \end_body

@@ -18,6 +18,13 @@ public class ClockSyncProtocol {
 	
 	public ClockSyncProtocol(){	}
 	
+	/**
+	 * Costruisce la risposta del server ad una richiesta di un client
+	 * 
+	 * @param currentTime: tempo corrente sul server, in millisecondi da Unix time
+	 * @param elapsedTime: tempo intercorso sul server dalla ricezione della richiesta alla risposta
+	 * @return
+	 */
 	public String simpleResponse(long currentTime, long elapsedTime){
 		return Long.toString(currentTime) + SEPARATOR + Long.toString(elapsedTime);
 	}
