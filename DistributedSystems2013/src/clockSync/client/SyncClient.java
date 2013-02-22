@@ -5,10 +5,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Scanner;
 
 import clockSync.common.ClockSyncProtocol;
 
@@ -23,7 +23,7 @@ public class SyncClient {
 	// tempo (in millisecondi) tra le richieste nel caso FULL
 	private final long SLEEP_TIME = 100;
 	
-	private String host;
+	private String server;
 	private String request_type;
 	private int request_number_full;
 	private ClockSyncProtocol protocol;
@@ -34,16 +34,26 @@ public class SyncClient {
 	
 	public static void main(String[] args){
 		SyncClient client = new SyncClient();
-
+		Scanner scanner = new Scanner(System.in);
+		
+		System.out.print("Inserire l'ip del server (default: localhost): ");
+		String server = scanner.nextLine();
+		scanner.close();
+		
+		if (!server.equals("")){
+			client.setServer(server);
+			System.out.println("Settato come server \""+client.getServer()+"\".");
+		}
+		
 		System.out.println("Data: " + client.getCurrentTimeAsString(0));
 		
 		System.out.println("Data: " + client.getCurrentTimeAsString(1));
 		
-		System.out.println("Data: " + client.getCurrentTimeAsString(100));
+		System.out.println("Data: " + client.getCurrentTimeAsString(20));
 	}
 	
 	public SyncClient(){
-		host = SyncClient.DEFAULT_SERVER;
+		server = SyncClient.DEFAULT_SERVER;
 		request_type = ClockSyncProtocol.REQ_SIMPLE;
 		request_number_full = SyncClient.DEFAULT_REQUEST_NUMBER;
 		protocol = new ClockSyncProtocol();
@@ -95,7 +105,7 @@ public class SyncClient {
 				int current_iteration;
 				for (current_iteration = 0; current_iteration < this.request_number_full; current_iteration++){
 					executeRequest();
-					if (this.host == null){
+					if (this.server == null){
 						currentTime = 0L;
 						return;
 					}
@@ -111,6 +121,9 @@ public class SyncClient {
 	 * Esegue una singola chiamata al server per ottenere l'ora corrente e la salva nella variabile di classe currentTime
 	 */
 	private void executeRequest(){
+		if (server == null){
+			System.err.println("Server is NULL, cannot create the socket.");
+		}
 		Socket socket = null;
         String fromServer = null;
 		PrintWriter out = null;
@@ -120,16 +133,12 @@ public class SyncClient {
         this.currentTime = 0L;
         
 		try {
-			socket = new Socket(host, ClockSyncProtocol.port);
+			socket = new Socket(server, ClockSyncProtocol.port);
 			out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-		} catch (UnknownHostException e) {
-			System.out.println("Server unknown: " + host);
-			host = null;
-			return;
-		} catch (IOException e) {
-			host = null;
-			e.printStackTrace();
+		} catch (Exception e) {
+			System.out.println("Server unknown: " + server);
+			server = null;
 			return;
 		}
 		
@@ -189,7 +198,11 @@ public class SyncClient {
 			return "FULL";
 	}
 	
-	public void setHost(String host){
-		this.host = host;
+	public void setServer(String server){
+		this.server = server;
+	}
+	
+	public String getServer(){
+		return server;
 	}
 }

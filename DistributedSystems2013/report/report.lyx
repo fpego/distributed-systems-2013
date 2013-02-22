@@ -72,15 +72,9 @@ February 19, 2013
 \end_layout
 
 \begin_layout Abstract
-Implement a clock synchronization primitive.
+Implement in Java a clock synchronization primitive.
  Choose the strategy that you think best to synchronize the clock of a requestin
 g machine against that of a reference (server) machine.
-\end_layout
-
-\begin_layout Abstract
-In Java implement a library that offers the required functionality and a
- test application that uses this library to synchronize the clocks of a
- group of machines against a reference one.
 \end_layout
 
 \begin_layout Part
@@ -89,6 +83,41 @@ Problem description
 
 \begin_layout Section
 Problem analysis
+\end_layout
+
+\begin_layout Standard
+The goal of this project is to create a Java server providing a clock synchroniz
+ation primitive.
+\end_layout
+
+\begin_layout Standard
+The server must implement at least one standard protocol for clock synchronizati
+on, possibly more than one.
+\end_layout
+
+\begin_layout Standard
+The client must receive the server's clock and display it to the user.
+\end_layout
+
+\begin_layout Section
+Assumptions
+\end_layout
+
+\begin_layout Itemize
+For the Christian's algorithm, the network messages have comparable travel
+ time, possibly identical.
+\end_layout
+
+\begin_layout Part
+Solution description
+\end_layout
+
+\begin_layout Section
+Overview
+\end_layout
+
+\begin_layout Standard
+
 \end_layout
 
 \end_body

@@ -18,16 +18,14 @@ public class SyncServer {
 	private boolean listening;
 	
 	public static void main(String[] args){
-		SyncServer srv = new SyncServer();
-		srv.run();
+		new SyncServer().run();
 	}
 	
-	public SyncServer(){
-		listening = true;
-	}
+	public SyncServer(){ }
 	
 	public void run(){
 		Socket client;
+		listening = true;
 		try {
 			server = new ServerSocket(ClockSyncProtocol.port);
 			System.out.println("Server up and listening on port " + ClockSyncProtocol.port);
@@ -46,8 +44,12 @@ public class SyncServer {
 		return listening;
 	}
 
-	public void setListening(boolean listening) {
-		this.listening = listening;
+	public void startListening(){
+		listening = true;
+	}
+	
+	public void stopListening(){
+		listening = false;
 	}
 	
 }
