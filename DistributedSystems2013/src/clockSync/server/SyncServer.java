@@ -21,7 +21,6 @@ public class SyncServer {
 		SyncServer s = new SyncServer();
 		s.run();
 	}
-	
 	public SyncServer(){ 
 		current_port = ClockSyncProtocol.port;
 	}
@@ -36,7 +35,6 @@ public class SyncServer {
 		
 		if (server != null){
 			System.err.println("The server is already running on port " + current_port + "!");
-			return;
 		}
 		
 		for (int i = 0; i < MAX_RETRIES && server == null; i++){

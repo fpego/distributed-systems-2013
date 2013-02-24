@@ -130,6 +130,9 @@ public class SyncClient {
 	 * Esegue una singola chiamata al server per ottenere l'ora corrente e la salva nella variabile di classe currentTime
 	 */
 	private void executeRequest(){
+		if (server == null){
+			System.err.println("Server is NULL, cannot create the socket.");
+		}
 		Socket socket = null;
         String fromServer = null;
 		PrintWriter out = null;
