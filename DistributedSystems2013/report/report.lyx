@@ -68,13 +68,36 @@ Dario Brazzi, Francesco Pegoraro
 \end_layout
 
 \begin_layout Date
-February 19, 2013
+March 04, 2013
 \end_layout
 
 \begin_layout Abstract
 Implement in Java a clock synchronization primitive.
  Choose the strategy that you think best to synchronize the clock of a requestin
 g machine against that of a reference (server) machine.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
 \end_layout
 
 \begin_layout Part
@@ -93,10 +116,14 @@ ation primitive.
 \begin_layout Standard
 The server must implement at least one standard protocol for clock synchronizati
 on, possibly more than one.
+ A suitable choice is the Cristian's algorithm.
+ The server will reply to each query with the current time, provided by
+ the OS.
 \end_layout
 
 \begin_layout Standard
-The client must receive the server's clock and display it to the user.
+The client must be able to ask to a server the current time and to receive
+ it to be displayed it to the user.
 \end_layout
 
 \begin_layout Section
@@ -113,7 +140,88 @@ Solution description
 \end_layout
 
 \begin_layout Section
-Overview
+Cristian's algorithm
+\end_layout
+
+\begin_layout Standard
+The simplest method to achieve clock synchronization is Cristian's algorithm.
+ It requires a server who knows the correct time, a client that wants to
+ synchronize its clock and a link between the client and the server.
+\end_layout
+
+\begin_layout Standard
+The message exchange is the following:
+\end_layout
+
+\begin_layout Itemize
+The client send a message to the server, requesting the current time, and
+ starts a timer.
+ 
+\begin_inset Formula $M{}_{1}$
+\end_inset
+
+= (REQ_TIME)
+\end_layout
+
+\begin_layout Itemize
+The server receives message 
+\begin_inset Formula $M_{1}$
+\end_inset
+
+and immediately starts a timer.
+ Than, process the request, building the response which is constituted of
+ the current time and the time interval needed to build the response.
+ So, just before sending the response stops the timer, than put the timer
+ value and the current time in the response and send the response back to
+ the client.
+ 
+\begin_inset Formula $M{}_{2}$
+\end_inset
+
+= (current_time, server_processing_time)
+\end_layout
+
+\begin_layout Itemize
+The client receive message 
+\begin_inset Formula $M{}_{2}$
+\end_inset
+
+from the server and stops its timer.
+ Than, sets its current time to 
+\begin_inset Newline newline
+\end_inset
+
+t = server_current_time + 
+\begin_inset Formula $\frac{1}{2}$
+\end_inset
+
+(client_processing_time - server_processing_time)
+\end_layout
+
+\begin_layout Section
+Program Design
+\end_layout
+
+\begin_layout Subsection
+Server
+\end_layout
+
+\begin_layout Standard
+The server must open a ServerSocket and listen to the first free port in
+ the range [4444;4454].
+ If no free port in this range is available, the server will shut down displayin
+g an error.
+\end_layout
+
+\begin_layout Standard
+After the server has registered, will wait any incoming message from any
+ client, until it's shutdown.
+\end_layout
+
+\begin_layout Standard
+When a message from a client is received, the response is delegated to a
+ new thread of the server, such that is possible to reply to a new client
+ before finishing previous requests.
 \end_layout
 
 \begin_layout Standard
