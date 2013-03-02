@@ -9,17 +9,20 @@ import clockSync.common.ClockSyncProtocol;
 /**
  * Classe del server di un servizio di network clock syncronization 
  */
-public class SyncServer {
+public class SyncServer{
 	
 	// numero massimo di tentativi di registrazione del server su porte diverse
 	private final int MAX_RETRIES = 10;
 	private ServerSocket server;
 	private int current_port;
-	private boolean listening;
+	private Thread serverMainThread;
 	
 	public static void main(String[] args) throws InterruptedException{
 		SyncServer s = new SyncServer();
 		s.run();
+		
+		Thread.sleep(1000);
+		s.stopServer();
 	}
 	public SyncServer(){ 
 		current_port = ClockSyncProtocol.port;
@@ -29,8 +32,7 @@ public class SyncServer {
 	 * Lancia il clock server. Il server rimane operativo fino a quando viene chiamato il metodo stopServer()
 	 */
 	public void run(){
-		Socket client;
-		listening = true;
+		
 		current_port = ClockSyncProtocol.port;
 		
 		if (server != null){
@@ -53,31 +55,42 @@ public class SyncServer {
 			return;
 		}
 		
-		while (listening){
-			try {
-				client = server.accept();
-			    new SyncServerThread(client, System.nanoTime()).start();
-			} catch (IOException e) { }
-		}
+		serverMainThread = new Thread(){
+			public void run(){
+				Socket client;
+				while (true){
+					try {
+						client = server.accept();
+					    new SyncServerThread(client, System.nanoTime()).start();
+					} catch (IOException e) { }
+				}
+			}
+		};
 		
-		try {
-			server.close();
-			server = null;
-		} catch (IOException e) {}
+		serverMainThread.start();
 		
-		System.out.println("Server stopped.");
 	}
 
 	/**
 	 * Se il server sta funzionando, viene fermata la sua esecuzione.
 	 */
+	@SuppressWarnings("deprecation")
 	public void stopServer(){
-		listening = false;
+		if (serverMainThread != null && serverMainThread.isAlive()){
+			serverMainThread.stop();
+			
+			try {
+				server.close();
+				server = null;
+			} catch (IOException e) {}
+			
+			System.out.println("Server stopped.");
+		}
 	}
 	
 	/**
-	 * Ritorna la porta che è stata utilizzata ora e sulla quale il server sta ascoltando i client.
-	 * Se il server non è in esecuzione, ritorna la porta usata di default. 
+	 * Ritorna la porta che ï¿½ stata utilizzata ora e sulla quale il server sta ascoltando i client.
+	 * Se il server non ï¿½ in esecuzione, ritorna la porta usata di default. 
 	 */
 	public int getCurrentPort(){
 		return current_port;
