@@ -2,7 +2,6 @@ package clockSync.server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.Socket;
 
 import clockSync.common.ClockSyncProtocol;
 
@@ -13,8 +12,11 @@ public class SyncServer{
 	
 	// numero massimo di tentativi di registrazione del server su porte diverse
 	private final int MAX_RETRIES = 10;
+	// il SocketServer che ascolta sulla porta 4444
 	private ServerSocket server;
+	// la porta del socket corrente in ascolto
 	private int current_port;
+	// il thread che contiene il server in ascolto
 	private Thread serverMainThread;
 	
 	public static void main(String[] args) throws InterruptedException{
@@ -55,14 +57,18 @@ public class SyncServer{
 			return;
 		}
 		
+		// questo thread contiene il SocketServer in ascolto dei client
+		// ritorna da solo quando il server viene chiuso da stopServer()
 		serverMainThread = new Thread(){
 			public void run(){
-				Socket client;
 				while (true){
 					try {
-						client = server.accept();
-					    new SyncServerThread(client, System.nanoTime()).start();
-					} catch (IOException e) { }
+					    new SyncServerThread(server.accept(), System.nanoTime()).start();
+					} catch (IOException e) { 
+						if (server == null){
+							return;
+						}
+					}
 				}
 			}
 		};
@@ -74,17 +80,25 @@ public class SyncServer{
 	/**
 	 * Se il server sta funzionando, viene fermata la sua esecuzione.
 	 */
-	@SuppressWarnings("deprecation")
 	public void stopServer(){
 		if (serverMainThread != null && serverMainThread.isAlive()){
-			serverMainThread.stop();
 			
 			try {
 				server.close();
-				server = null;
-			} catch (IOException e) {}
+			} catch (IOException e) {
+			}
+
+			server = null;
+			
+			try {
+				serverMainThread.join();
+			} catch (InterruptedException e) {	}
+			
+			serverMainThread = null;
 			
 			System.out.println("Server stopped.");
+		}else{
+			System.out.println("The server was not running!");
 		}
 	}
 	

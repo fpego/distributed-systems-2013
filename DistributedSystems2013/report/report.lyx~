@@ -207,10 +207,25 @@ Server
 \end_layout
 
 \begin_layout Standard
-The server must connect and listen to the first free port in the range [4444;445
-4].
+The server must open a ServerSocket and listen to the first free port in
+ the range [4444;4454].
  If no free port in this range is available, the server will shut down displayin
 g an error.
+\end_layout
+
+\begin_layout Standard
+After the server has registered, will wait any incoming message from any
+ client, until it's shutdown.
+\end_layout
+
+\begin_layout Standard
+When a message from a client is received, the response is delegated to a
+ new thread of the server, such that is possible to reply to a new client
+ before finishing previous requests.
+\end_layout
+
+\begin_layout Standard
+
 \end_layout
 
 \end_body
