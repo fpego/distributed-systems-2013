@@ -21,11 +21,12 @@ public class SyncServer{
 	
 	public static void main(String[] args) throws InterruptedException{
 		SyncServer s = new SyncServer();
-		s.run();
+		s.startServer();
 		
 		Thread.sleep(1000);
 		s.stopServer();
 	}
+	
 	public SyncServer(){ 
 		current_port = ClockSyncProtocol.port;
 	}
@@ -33,9 +34,7 @@ public class SyncServer{
 	/**
 	 * Lancia il clock server. Il server rimane operativo fino a quando viene chiamato il metodo stopServer()
 	 */
-	public void run(){
-		
-		current_port = ClockSyncProtocol.port;
+	public void startServer(){
 		
 		if (server != null){
 			System.err.println("The server is already running on port " + current_port + "!");
@@ -44,12 +43,17 @@ public class SyncServer{
 		
 		for (int i = 0; i < MAX_RETRIES && server == null; i++){
 			current_port += i;
+			
 			try {
 				server = new ServerSocket(current_port);
 				System.out.println("Server up and listening on port " + current_port);
 			} catch (IOException e) {
 				System.err.println("Impossible to register the server on port " + current_port + ", trying the next one...");
 				server = null;
+			}
+			
+			if (current_port < 4444 || current_port > 4454){
+				break;
 			}
 		}
 		if (server == null){
@@ -106,7 +110,16 @@ public class SyncServer{
 	 * Ritorna la porta che � stata utilizzata ora e sulla quale il server sta ascoltando i client.
 	 * Se il server non � in esecuzione, ritorna la porta usata di default. 
 	 */
-	public int getCurrentPort(){
+	public int getPort(){
 		return current_port;
+	}
+	
+	/**
+	 * Setta la porta sulla quale si mette in ascolto il server.
+	 * Deve essere compresa tra 1024 e 65535 
+	 */
+	public void setPort(int port){
+		if (port > 1024 && port < 65535)
+			this.current_port = port;
 	}
 }

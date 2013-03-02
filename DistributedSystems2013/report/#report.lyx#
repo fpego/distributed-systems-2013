@@ -222,10 +222,30 @@ After the server has registered, will wait any incoming message from any
 When a message from a client is received, the response is delegated to a
  new thread of the server, such that is possible to reply to a new client
  before finishing previous requests.
- The thread will receive the connection with the client and the timer started
- by the parent process, timer that will measure the time took by the server
- to serve the response.
- 
+ The new thread will receive the connection with the client and the timer
+ started by the parent process, timer that will measure the time took by
+ the server to serve the response.
+ It will reply to the client with the most recent current time and the server
+ processing time, eventually closing the socket with the client.
+\end_layout
+
+\begin_layout Standard
+The server will expose the following methods:
+\end_layout
+
+\begin_layout Itemize
+setPort(): sets the server listening port to a specified value
+\end_layout
+
+\begin_layout Itemize
+getPort(): returns the current listening port, or the default one if not
+ specified
+\end_layout
+
+\begin_layout Itemize
+startServer(): starts the server and opens a ServerSocket on the specified
+ port.
+ If the port is not specified, use one in the range [4444;4454].
 \end_layout
 
 \begin_layout Standard
