@@ -35,6 +35,7 @@ public class SyncServer {
 		
 		if (server != null){
 			System.err.println("The server is already running on port " + current_port + "!");
+			return;
 		}
 		
 		for (int i = 0; i < MAX_RETRIES && server == null; i++){
