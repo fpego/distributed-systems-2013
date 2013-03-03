@@ -28,7 +28,7 @@ public class SyncServer{
 	}
 	
 	public SyncServer(){ 
-		current_port = ClockSyncProtocol.port;
+		current_port = ClockSyncProtocol.DEFAULT_PORT;
 	}
 	
 	/**
@@ -116,10 +116,12 @@ public class SyncServer{
 	
 	/**
 	 * Setta la porta sulla quale si mette in ascolto il server.
-	 * Deve essere compresa tra 1024 e 65535 
+	 * Deve essere compresa tra 1024 e 65535, altrimenti viene settata quella di default
 	 */
 	public void setPort(int port){
-		if (port > 1024 && port < 65535)
+		if (port > ClockSyncProtocol.MIN_PORT && port < ClockSyncProtocol.MAX_PORT)
 			this.current_port = port;
+		else
+			this.current_port = ClockSyncProtocol.DEFAULT_PORT;
 	}
 }

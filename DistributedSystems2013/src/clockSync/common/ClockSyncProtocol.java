@@ -7,7 +7,10 @@ import java.util.ArrayList;
  */
 public class ClockSyncProtocol {
 	
-	public final static int port = 4444;
+	public final static int DEFAULT_PORT = 4444;
+	
+	public final static int MIN_PORT = 1024;
+	public final static int MAX_PORT = 65535;
 	
 	public final static String REQ_SIMPLE = "REQ SIMPLE SYNC";
 	public final static String REQ_FULL = "REQ FULL SYNC";

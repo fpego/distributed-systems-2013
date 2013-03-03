@@ -234,22 +234,88 @@ The server will expose the following methods:
 \end_layout
 
 \begin_layout Itemize
-setPort(): sets the server listening port to a specified value
+
+\emph on
+setPort()
+\emph default
+: sets the server listening port to a specified value
 \end_layout
 
 \begin_layout Itemize
-getPort(): returns the current listening port, or the default one if not
- specified
+
+\emph on
+getPort()
+\emph default
+: returns the current listening port, or the default one if not specified
 \end_layout
 
 \begin_layout Itemize
-startServer(): starts the server and opens a ServerSocket on the specified
- port.
+
+\emph on
+startServer()
+\emph default
+: starts the server and opens a ServerSocket on the specified port.
  If the port is not specified, use one in the range [4444;4454].
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
 
+\emph on
+stopServer()
+\emph default
+: if the server is active, stop it and close the open socket.
+\end_layout
+
+\begin_layout Subsection
+Client
+\end_layout
+
+\begin_layout Standard
+The client must be able to connect to a specified server on a specified
+ port, sending a message requesting the current time and receiving it.
+ The time will be presented to the user in the following format: 
+\begin_inset Quotes eld
+\end_inset
+
+dd/MM/yyyy hh:mm:ss SSS
+\begin_inset Quotes erd
+\end_inset
+
+, for example 
+\begin_inset Quotes eld
+\end_inset
+
+15/03/2013 15:06:22 598
+\begin_inset Quotes erd
+\end_inset
+
+.
+ The client can also get the current time as milliseconds passed since 01/01/197
+0, also called 
+\begin_inset Quotes eld
+\end_inset
+
+unix time
+\begin_inset Quotes erd
+\end_inset
+
+, which is useful in many situations.
+\end_layout
+
+\begin_layout Standard
+The client will expose the following methods:
+\end_layout
+
+\begin_layout Itemize
+getCurrentTime(): 
+\end_layout
+
+\begin_layout Subsection
+Protocol
+\end_layout
+
+\begin_layout Standard
+The protocol ...
 \end_layout
 
 \end_body

@@ -271,7 +271,95 @@ Client
 \end_layout
 
 \begin_layout Standard
-The client ...
+The client must be able to connect to a specified server on a specified
+ port, sending a message requesting the current time and receiving it.
+ The time will be presented to the user in the following format: 
+\begin_inset Quotes eld
+\end_inset
+
+dd/MM/yyyy hh:mm:ss SSS
+\begin_inset Quotes erd
+\end_inset
+
+, for example 
+\begin_inset Quotes eld
+\end_inset
+
+15/03/2013 15:06:22 598
+\begin_inset Quotes erd
+\end_inset
+
+.
+ The client can also get the current time as milliseconds passed since 01/01/197
+0, also called 
+\begin_inset Quotes eld
+\end_inset
+
+unix time
+\begin_inset Quotes erd
+\end_inset
+
+, which is useful in many situations.
+\end_layout
+
+\begin_layout Standard
+The client will expose the following methods:
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+getCurrentTime()
+\emph default
+: returns the current time as Unix Time (milliseconds since 01/01/1970)
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+getCurrentTimeAsString()
+\emph default
+: returns the current time in the format 
+\begin_inset Quotes eld
+\end_inset
+
+dd/MM/yyyy hh:mm:ss SSS
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+setPort()
+\emph default
+: sets the port to which the client will connect to the server
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+getPort()
+\emph default
+: returns the current clock server port
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+setServer()
+\emph default
+: sets the name or the IP address of the clock server
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+getServer()
+\emph default
+: returns the current name or IP address of the clock server
 \end_layout
 
 \begin_layout Subsection

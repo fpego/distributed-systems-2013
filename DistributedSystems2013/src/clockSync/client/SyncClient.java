@@ -27,8 +27,11 @@ public class SyncClient {
 	public static final String DEFAULT_SERVER = "localhost";
 	// tempo (in millisecondi) tra le richieste nel caso FULL
 	private final long SLEEP_TIME = 100;
+	// formato della visualizzazione del tempo
+	public static final String DATA_FORMAT = "dd/MM/yyyy hh:mm ss SSS";
 	
 	private String server;
+	private int port;
 	private String request_type;
 	private int request_number_full;
 	private ClockSyncProtocol protocol;
@@ -43,11 +46,19 @@ public class SyncClient {
 		
 		System.out.print("Inserire l'ip del server (default: localhost): ");
 		String server = scanner.nextLine();
-		scanner.close();
 		
 		if (!server.equals("")){
 			client.setServer(server);
 			System.out.println("Settato come server \""+client.getServer()+"\".");
+		}
+		
+		System.out.println("Inserire la porta del server (default: 4444): ");
+		String port = scanner.nextLine();
+		scanner.close();
+		
+		if (!port.equals("")){
+			client.setPort(port);
+			System.out.println("Settata la porta \""+client.getPort()+"\".");
 		}
 		
 		System.out.println("Data: " + client.getCurrentTimeAsString(0));
@@ -59,11 +70,12 @@ public class SyncClient {
 	
 	public SyncClient(){
 		server = SyncClient.DEFAULT_SERVER;
+		port = ClockSyncProtocol.DEFAULT_PORT;
 		request_type = ClockSyncProtocol.REQ_SIMPLE;
 		request_number_full = SyncClient.DEFAULT_REQUEST_NUMBER;
 		protocol = new ClockSyncProtocol();
 		calendar = new GregorianCalendar();
-		date_format = new SimpleDateFormat("dd/MM/yyyy hh:mm ss SSS");
+		date_format = new SimpleDateFormat(SyncClient.DATA_FORMAT);
 		currentTime = 0L;
 	}
 	
@@ -79,13 +91,13 @@ public class SyncClient {
 		}else if (request_type == 1){
 			this.request_type = ClockSyncProtocol.REQ_FULL;
 		}else if (request_type >= 2 && request_type <= SyncClient.MAX_REQUEST_NUMBER){
-			this.setRequestNumber(request_type);
+			this.request_number_full = request_type;
 			this.request_type = ClockSyncProtocol.REQ_FULL;
 		}
 		
 		getCurrentTime();
 		
-		this.setRequestNumber(SyncClient.DEFAULT_REQUEST_NUMBER);
+		this.request_number_full = SyncClient.DEFAULT_REQUEST_NUMBER;
 		
 		return this.currentTime;
 	}
@@ -147,7 +159,7 @@ public class SyncClient {
 		}
         
 		try {
-			socket = new Socket(server, ClockSyncProtocol.port);
+			socket = new Socket(server, port);
 			out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		} catch (Exception e) {
@@ -185,38 +197,37 @@ public class SyncClient {
 	}
 	
 	/**
-	 * Setta il numero di richieste fatte al server dal tipo di richiesta FULL. Controlla che sia un numero ammissibile
-	 * @param request_number_full
+	 * Setta il server al quale il client si collega per ottenere il tempo
 	 */
-	public void setRequestNumber(int request_number_full){
-		this.request_number_full = request_number_full;
-		this.checkRequestNumber();
-	}
-	
-	public int getRequestNumber(){
-		return this.request_number_full;
-	}
-	
-	public void setRequestSimple(){
-		this.request_type = ClockSyncProtocol.REQ_SIMPLE;
-	}
-	
-	public void setRequestFull(){
-		this.request_type = ClockSyncProtocol.REQ_FULL;
-	}
-	
-	public String getRequest(){
-		if (this.request_type.equals(ClockSyncProtocol.REQ_SIMPLE))
-			return "SIMPLE";
-		else
-			return "FULL";
-	}
-	
 	public void setServer(String server){
 		this.server = server;
 	}
 	
 	public String getServer(){
 		return server;
+	}
+	
+	/**
+	 * Setta la porta sulla quale ci si collega al server per chiedere il tempo
+	 */
+	public void setPort(int port){
+		if (port > ClockSyncProtocol.MIN_PORT && port < ClockSyncProtocol.MAX_PORT)
+			this.port = port;
+		else
+			this.port = ClockSyncProtocol.DEFAULT_PORT;
+	}
+	
+	public void setPort(String port){
+		int iPort;
+		try{
+			iPort = Integer.parseInt(port);
+		}catch (Exception e){
+			iPort = ClockSyncProtocol.DEFAULT_PORT;
+		}
+		this.setPort(iPort);
+	}
+	
+	public int getPort(){
+		return this.port;
 	}
 }
