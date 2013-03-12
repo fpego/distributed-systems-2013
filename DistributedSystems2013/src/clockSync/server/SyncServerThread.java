@@ -9,9 +9,10 @@ import java.net.Socket;
 import clockSync.common.ClockSyncProtocol;
 
 /**
- * Istanza del server che risponde effettivamente alla chiamata di un client 
+ * Instance of the server, will handle the reply to the client
  */
 public class SyncServerThread extends Thread{
+	
 	private Socket client = null;
 	private ClockSyncProtocol protocol;
 	private long responseTime;
@@ -42,7 +43,7 @@ public class SyncServerThread extends Thread{
 		    	elapsedTime = System.nanoTime() - responseTime;
 		    	out.println(protocol.simpleResponse(currentTime, elapsedTime));
 		    }else{
-		    	out.println("ERROR: REQUEST NOT VALID");
+		    	out.println(ClockSyncProtocol.SERVER_ERROR_MESSAGE);
 		    }
 		    
 		} catch (IOException e) {
