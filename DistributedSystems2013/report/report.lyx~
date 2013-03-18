@@ -343,7 +343,23 @@ setPort()
 \emph on
 getPort()
 \emph default
-: gets the current port
+: returns the current clock server port
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+setServer()
+\emph default
+: sets the name or the IP address of the clock server
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+getServer()
+\emph default
+: returns the current name or IP address of the clock server
 \end_layout
 
 \begin_layout Subsection

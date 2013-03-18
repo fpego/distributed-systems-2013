@@ -11,8 +11,8 @@ import clockSync.common.ClockSyncProtocol;
 /**
  * Instance of the server, will handle the reply to the client
  */
-public class SyncServerThread extends Thread{
-	
+public class SyncServerThread extends Thread {
+
 	private Socket client = null;
 	private ClockSyncProtocol protocol;
 	private long responseTime;
@@ -21,45 +21,64 @@ public class SyncServerThread extends Thread{
 	private PrintWriter out;
 	private BufferedReader in;
 	private String received;
-	
-    public SyncServerThread(Socket socket, long responseTime) {
-    	super("SyncServerThread");
-    	protocol = new ClockSyncProtocol();
-    	this.responseTime = responseTime;
-    	this.client = socket;
-    }
 
-    public void run() {
+	/**
+	 * Initiate the SyncServerThread class
+	 * 
+	 * @param socket
+	 *            the client socket
+	 * @param responseTime
+	 *            the server's current system nanotime, used to measure the
+	 *            response time
+	 */
+	public SyncServerThread(Socket socket, long responseTime) {
+		super("SyncServerThread");
+		protocol = new ClockSyncProtocol();
+		this.responseTime = responseTime;
+		this.client = socket;
+	}
+
+	/**
+	 * Implements the response to the client
+	 */
+	public void run() {
 		try {
-			System.out.println("Request received from client " + client.getInetAddress() + ":" + client.getPort());
-			
-			out = new PrintWriter(client.getOutputStream(), true);
-		    in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-		    
-		    received = in.readLine();
+			System.out.println("Request received from client "
+					+ client.getInetAddress() + ":" + client.getPort());
 
-		    if (received.equals(ClockSyncProtocol.REQ_SIMPLE) || received.equals(ClockSyncProtocol.REQ_FULL)){
-		    	currentTime = System.currentTimeMillis();
-		    	elapsedTime = System.nanoTime() - responseTime;
-		    	out.println(protocol.simpleResponse(currentTime, elapsedTime));
-		    }else{
-		    	out.println(ClockSyncProtocol.SERVER_ERROR_MESSAGE);
-		    }
-		    
+			out = new PrintWriter(client.getOutputStream(), true);
+			in = new BufferedReader(new InputStreamReader(
+					client.getInputStream()));
+
+			received = in.readLine();
+
+			if (received.equals(ClockSyncProtocol.REQ_SIMPLE)
+					|| received.equals(ClockSyncProtocol.REQ_FULL)) {
+				currentTime = System.currentTimeMillis();
+				elapsedTime = System.nanoTime() - responseTime;
+				out.println(protocol.simpleResponse(currentTime, elapsedTime));
+			} else {
+				out.println(ClockSyncProtocol.SERVER_ERROR_MESSAGE);
+			}
+
 		} catch (IOException e) {
-			System.err.println("Comunication error: " + e.getLocalizedMessage());
+			System.err
+					.println("Comunication error: " + e.getLocalizedMessage());
 		}
-		
-		try{
+
+		try {
 			out.close();
-		}catch (Exception e){}
-		
-		try{
+		} catch (Exception e) {
+		}
+
+		try {
 			in.close();
-		}catch (Exception e){}
-		
-		try{
+		} catch (Exception e) {
+		}
+
+		try {
 			client.close();
-		}catch (Exception e){}
-    }
+		} catch (Exception e) {
+		}
+	}
 }

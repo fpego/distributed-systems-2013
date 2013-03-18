@@ -39,36 +39,37 @@ public class SyncClient {
 	private Calendar calendar;
 	private SimpleDateFormat date_format;
 
+	/**
+	 * Main entry point. Asks to the user the server's IP and port and gets the
+	 * current time on the server.
+	 */
 	public static void main(String[] args) {
 		SyncClient client = new SyncClient();
 		Scanner scanner = new Scanner(System.in);
 
-		System.out.print("Inserire l'ip del server (default: localhost): ");
+		System.out.print("Insert server's IP (default: localhost): ");
 		String server = scanner.nextLine();
 
 		if (!server.equals("")) {
 			client.setServer(server);
-			System.out.println("Settato come server \"" + client.getServer()
-					+ "\".");
+			System.out.println("Server is \"" + client.getServer() + "\".");
 		}
 
-		System.out.println("Inserire la porta del server (default: 4444): ");
+		System.out.println("Insert server's port (default: 4444): ");
 		String port = scanner.nextLine();
 		scanner.close();
 
 		if (!port.equals("")) {
 			client.setPort(port);
-			System.out
-					.println("Settata la porta \"" + client.getPort() + "\".");
+			System.out.println("Server port is \"" + client.getPort() + "\".");
 		}
 
-		System.out.println("Data: " + client.getCurrentTimeAsString(0));
-
-		System.out.println("Data: " + client.getCurrentTimeAsString(1));
-
-		System.out.println("Data: " + client.getCurrentTimeAsString(20));
+		System.out.println("Date: " + client.getCurrentTimeAsString(0));
 	}
 
+	/**
+	 * Initialize the SyncClient class
+	 */
 	public SyncClient() {
 		server = SyncClient.DEFAULT_SERVER;
 		port = ClockSyncProtocol.DEFAULT_PORT;
@@ -81,8 +82,7 @@ public class SyncClient {
 	}
 
 	/**
-	 * Ritorna il tempo corrente letto dal server Returns the current time,
-	 * fetched from the server.
+	 * Returns the current time, fetched from the server.
 	 * 
 	 * @param request_type
 	 *            If '0', the request is "simple". If '1', the request is "full"
@@ -252,6 +252,11 @@ public class SyncClient {
 		this.setPort(iPort);
 	}
 
+	/**
+	 * Returns the server's port to witch the client will connect
+	 * 
+	 * @return the server's port
+	 */
 	public int getPort() {
 		return this.port;
 	}

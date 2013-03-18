@@ -6,8 +6,8 @@ import java.net.ServerSocket;
 import clockSync.common.ClockSyncProtocol;
 
 /**
- * Time syncronization server. Provides a public network time service,
- * implementing Cristian's algorithm
+ * Time synchronization server. Provides a public network time service,
+ * implementing Cristian's algorithm. The time returned is obtained from the OS.
  */
 public class SyncServer {
 
@@ -23,9 +23,11 @@ public class SyncServer {
 	/** thread listening on current_port */
 	private Thread serverMainThread;
 
+	/**
+	 * Main entry point. Starts the server on port 4444 (default)
+	 */
 	public static void main(String[] args) {
-		SyncServer s = new SyncServer();
-		s.startServer();
+		new SyncServer().startServer();
 	}
 
 	public SyncServer() {
@@ -33,8 +35,10 @@ public class SyncServer {
 	}
 
 	/**
-	 * Launch the server. It remains listening until stopServer() is called or a
-	 * fatal error occours.
+	 * Launch the server. If the port has not been set, the server will listen
+	 * on port 4444. If port 4444 is busy, will be tried the next one for 10
+	 * times. It remains listening until stopServer() is called or a fatal error
+	 * occurs.
 	 */
 	public void startServer() {
 
@@ -57,9 +61,6 @@ public class SyncServer {
 				server = null;
 			}
 
-			if (current_port < 4444 || current_port > 4454) {
-				break;
-			}
 		}
 		if (server == null) {
 			System.out
@@ -83,11 +84,10 @@ public class SyncServer {
 		};
 
 		serverMainThread.start();
-
 	}
 
 	/**
-	 * If the server is running, it's stopped and all the connections are
+	 * If the server is running, it is stopped and all the connections are
 	 * closed.
 	 */
 	public void stopServer() {
