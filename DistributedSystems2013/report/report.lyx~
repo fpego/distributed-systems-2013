@@ -363,11 +363,92 @@ getServer()
 \end_layout
 
 \begin_layout Subsection
-Protocol
+Comunication Protocol
 \end_layout
 
 \begin_layout Standard
-The protocol ...
+The protocol defines the role of each agent, in this case the client and
+ the server, and specifies the rules to excange messages between the client
+ and the server.
+\end_layout
+
+\begin_layout Subsubsection
+Server protocol
+\end_layout
+
+\begin_layout Standard
+The server doesn't care of the type of request the client is asking, it
+ just tries to reply as quick as possible the current time and the time
+ elapsed on the server processing the request.
+\end_layout
+
+\begin_layout Standard
+So the server response is in the following format:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+<current_time><separator><elapsed_time>
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where
+\end_layout
+
+\begin_layout Itemize
+<current_time> is a string containing the current time on the server, in
+ milliseconds since Unix time (1 Jan 1970) (see 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://en.wikipedia.org/wiki/Unix_time
+\end_layout
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Itemize
+<separator> is a string (or a char) separating the two values.
+ It must not be a number.
+ For example, it can be the string 
+\begin_inset Quotes eld
+\end_inset
+
+:
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+<elapsed_time> is a string containing the time elapsed on the server while
+ the response was being served, in nanoseconds.
+\end_layout
+
+\begin_layout Standard
+An example of a possible response is the following: 
+\emph on
+1363964626096:8347760
+\end_layout
+
+\begin_layout Subsubsection
+Client protocol
+\end_layout
+
+\begin_layout Standard
+Client protocol
 \end_layout
 
 \end_body

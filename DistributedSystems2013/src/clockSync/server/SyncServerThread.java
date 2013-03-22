@@ -56,6 +56,7 @@ public class SyncServerThread extends Thread {
 					|| received.equals(ClockSyncProtocol.REQ_FULL)) {
 				currentTime = System.currentTimeMillis();
 				elapsedTime = System.nanoTime() - responseTime;
+				System.out.println(protocol.simpleResponse(currentTime, elapsedTime));
 				out.println(protocol.simpleResponse(currentTime, elapsedTime));
 			} else {
 				out.println(ClockSyncProtocol.SERVER_ERROR_MESSAGE);
