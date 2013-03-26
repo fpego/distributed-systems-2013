@@ -435,7 +435,19 @@ http://en.wikipedia.org/wiki/Unix_time
 \begin_layout Standard
 An example of a possible response is the following: 
 \emph on
+
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
 1363964626096:8347760
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -641,6 +653,25 @@ In a formula, given
 \begin_layout Standard
 Between two requests the client should wait at least 100 milliseconds to
  do not falsate the measure.
+\end_layout
+
+\begin_layout Section
+Conclusions
+\end_layout
+
+\begin_layout Standard
+The program has been succesfully implemented in Java.
+\end_layout
+
+\begin_layout Standard
+SyncServer is the server, where it can be specified the listening port,
+ where it will listen until it's terminated.
+\end_layout
+
+\begin_layout Standard
+SyncClient is the client.
+ It requires the server IP (or logical name) and its port, then it will
+ request the current time to the server and display to the user.
 \end_layout
 
 \end_body
