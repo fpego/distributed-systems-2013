@@ -1,4 +1,5 @@
-This is LuaTeX, Version beta-0.70.1-2012011814 (MiKTeX 2.9)  (format=lualatex 2012.10.20)  22 MAR 2013 16:04
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9) (preloaded format=pdflatex 2013.3.1)  26 MAR 2013 09:19
+entering extended mode
 **report.tex
 
 ! Emergency stop.
@@ -6,14 +7,13 @@ This is LuaTeX, Version beta-0.70.1-2012011814 (MiKTeX 2.9)  (format=lualatex 20
               
 End of file on the terminal!
 
-
-
-Here is how much of LuaTeX's memory you used:
- 5 strings out of 495013
- 100000,89155 words of node,token memory allocated 182 words of node memory still in use:
-    nodes
-   avail lists: 2:12,3:1,6:1
- 3661 multiletter control sequences out of 65536+200000
- 14 fonts using 403927 bytes
- 0i,0n,0p,0b,6s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 
+Here is how much of TeX's memory you used:
+ 2 strings out of 493921
+ 16 string characters out of 3144865
+ 49031 words of memory out of 3000000
+ 3400 multiletter control sequences out of 15000+200000
+ 3640 words of font info for 14 fonts, out of 3000000 for 9000
+ 841 hyphenation exceptions out of 8191
+ 0i,0n,0p,1b,6s stack positions out of 5000i,500n,10000p,200000b,50000s
 !  ==> Fatal error occurred, no output PDF file produced!
