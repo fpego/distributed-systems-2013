@@ -43,7 +43,7 @@ public class SyncServerThread extends Thread {
 	 */
 	public void run() {
 		try {
-			System.out.println("Request received from client "
+			System.out.println("\nRequest received from client "
 					+ client.getInetAddress() + ":" + client.getPort());
 
 			out = new PrintWriter(client.getOutputStream(), true);
@@ -56,7 +56,6 @@ public class SyncServerThread extends Thread {
 					|| received.equals(ClockSyncProtocol.REQ_FULL)) {
 				currentTime = System.currentTimeMillis();
 				elapsedTime = System.nanoTime() - responseTime;
-				System.out.println(protocol.simpleResponse(currentTime, elapsedTime));
 				out.println(protocol.simpleResponse(currentTime, elapsedTime));
 			} else {
 				out.println(ClockSyncProtocol.SERVER_ERROR_MESSAGE);

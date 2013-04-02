@@ -2,6 +2,7 @@ package clockSync.server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.Scanner;
 
 import clockSync.common.ClockSyncProtocol;
 
@@ -27,7 +28,33 @@ public class SyncServer {
 	 * Main entry point. Starts the server on port 4444 (default)
 	 */
 	public static void main(String[] args) {
-		new SyncServer().startServer();
+		SyncServer server = new SyncServer();
+		Scanner scanner = new Scanner(System.in);
+
+		System.out.print("Insert server listening port (default: " + ClockSyncProtocol.DEFAULT_PORT + "): ");
+		String port = scanner.nextLine();
+		
+		
+		if (!port.equals("")) {
+			try{
+				int p = Integer.parseInt(port);
+				server.setPort(p);
+			}catch (Exception e){}
+		}
+		
+		System.out.println("Server listening port is \"" + server.getPort() + "\".");
+		
+		server.startServer();
+		
+		while (true){
+			System.out.print("To stop the server, write \"stop\" and press [ENTER]: ");
+			String cmd = scanner.nextLine();
+			if (cmd.equalsIgnoreCase("stop")){
+				break;
+			}
+		}
+		scanner.close();
+		server.stopServer();
 	}
 
 	public SyncServer() {
