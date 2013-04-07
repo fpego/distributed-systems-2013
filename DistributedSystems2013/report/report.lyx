@@ -548,11 +548,29 @@ status open
 
 \begin_layout Standard
 The real current client time is calculated with the formula 
-\begin_inset Formula $time=currentTimeServer+messageTravelTime$
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+time=currentTimeServer+messageTravelTime
+\]
+
 \end_inset
 
-, where 
-\begin_inset Formula $messageTravelTime=(timeElapsedClient-timeElapsedServer)/2000$
+
+\end_layout
+
+\begin_layout Standard
+where 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+messageTravelTime=(timeElapsedClient-timeElapsedServer)/2000
+\]
+
 \end_inset
 
 
@@ -640,14 +658,32 @@ In a formula, given
 \end_inset
 
  is the response index, 
-\begin_inset Formula $time=currentTimeServer_{N}+\frac{\sum_{i=1}^{N}messageTravelTime_{i}}{N}$
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+time=currentTimeServer_{N}+\frac{\sum_{i=1}^{N}messageTravelTime_{i}}{N}
+\]
+
 \end_inset
 
-, where 
-\begin_inset Formula $messageTravelTime_{i}=(timeElapsedClient_{i}-timeElapsedServer_{i})/2000$
+
+\end_layout
+
+\begin_layout Standard
+where
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+messageTravelTime_{i}=(timeElapsedClient_{i}-timeElapsedServer_{i})/2000
+\]
+
 \end_inset
 
-.
+
 \end_layout
 
 \begin_layout Standard
@@ -664,14 +700,16 @@ The program has been succesfully implemented in Java.
 \end_layout
 
 \begin_layout Standard
-SyncServer is the server, where it can be specified the listening port,
- where it will listen until it's terminated.
+SyncServer is the server.
+ It can be specified the listening port, where the program will listen until
+ it's terminated.
 \end_layout
 
 \begin_layout Standard
 SyncClient is the client.
  It requires the server IP (or logical name) and its port, then it will
- request the current time to the server and display to the user.
+ request the current time to the specified server and will display it to
+ the user.
 \end_layout
 
 \begin_layout Standard
