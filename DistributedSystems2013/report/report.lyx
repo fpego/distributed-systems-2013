@@ -64,11 +64,15 @@ Clock synchronization
 \end_layout
 
 \begin_layout Author
-Dario Brazzi, Francesco Pegoraro
+Dario Brazzi, matricola 795402 
+\begin_inset Newline newline
+\end_inset
+
+Francesco Pegoraro, matricola 782004
 \end_layout
 
 \begin_layout Date
-March 04, 2013
+April 09, 2013
 \end_layout
 
 \begin_layout Abstract
@@ -295,7 +299,7 @@ dd/MM/yyyy hh:mm:ss SSS
 \begin_inset Quotes eld
 \end_inset
 
-unix time
+Unix time
 \begin_inset Quotes erd
 \end_inset
 
@@ -688,7 +692,7 @@ messageTravelTime_{i}=(timeElapsedClient_{i}-timeElapsedServer_{i})/2000
 
 \begin_layout Standard
 Between two requests the client should wait at least 100 milliseconds to
- do not falsate the measure.
+ do not distort the measurement.
 \end_layout
 
 \begin_layout Section
