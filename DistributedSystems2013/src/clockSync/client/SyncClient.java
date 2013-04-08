@@ -27,7 +27,7 @@ public class SyncClient {
 	/** milliseconds between two requests in the full request */
 	private final long SLEEP_TIME = 100;
 	/** time display format */
-	public static final String DATA_FORMAT = "dd/MM/yyyy hh:mm ss SSS";
+	public static final String DATA_FORMAT = "dd/MM/yyyy HH:mm ss SSS";
 
 	private String server;
 	private int port;
@@ -52,19 +52,28 @@ public class SyncClient {
 
 		if (!server.equals("")) {
 			client.setServer(server);
-			System.out.println("Server is \"" + client.getServer() + "\".");
 		}
-
+		System.out.println("Server is \"" + client.getServer() + "\".");
+		
 		System.out.println("Insert server's port (default: 4444): ");
 		String port = scanner.nextLine();
 		scanner.close();
 
 		if (!port.equals("")) {
 			client.setPort(port);
-			System.out.println("Server port is \"" + client.getPort() + "\".");
 		}
+		System.out.println("Server port is \"" + client.getPort() + "\".");
+		
+		System.out.println("Connecting to " + client.getServer() + ":" + client.getPort() + "...");
 
+		System.out.println("\ngetCurrentTimeAsString(0)");
 		System.out.println("Date: " + client.getCurrentTimeAsString(0));
+		
+		System.out.println("\ngetCurrentTimeAsString(10)");
+		System.out.println("Date: " + client.getCurrentTimeAsString(10));
+		
+		System.out.println("\ngetCurrentTime(0)");
+		System.out.println("Date (in milliseconds): " + client.getCurrentTime(0));
 	}
 
 	/**
@@ -111,7 +120,7 @@ public class SyncClient {
 
 	/**
 	 * The same as {@link getCurrentTime()}, but returns the time as a string in
-	 * the following format: "dd/MM/yyyy hh:mm ss SSS" If there are errors
+	 * the following format: "dd/MM/yyyy HH:mm ss SSS" If there are errors
 	 * returns "01/01/1970 00:00 00 000"
 	 */
 	public String getCurrentTimeAsString(int request_type) {
